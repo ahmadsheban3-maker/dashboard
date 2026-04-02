@@ -15,7 +15,7 @@ const upvoteBtn = document.getElementById('upvoteBtn');
 
 // ==================== API CONFIGURATION ====================
 // Update this with your actual Hugging Face Space URL
-const API_BASE_URL = 'https://ahmeddewy1-radiofm.hf.space'; 
+const API_BASE_URL = 'https://ahmeddewy1-radiofm.hf.space/api/stats'; 
 
 let cachedStats = {
     servers: localStorage.getItem('cachedServers') || 0,
