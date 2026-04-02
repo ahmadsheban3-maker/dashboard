@@ -374,7 +374,7 @@ function handleAnimationsToggle() {
 // ==================== INVITE LINK ====================
 function getInviteLink() {
     // Replace with your actual bot client ID
-    const clientId = 'YOUR_BOT_CLIENT_ID';
+    const clientId = '1489146429732818986';
     return `[discord.com](https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot%20applications.commands)`;
 }
 
