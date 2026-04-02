@@ -14,7 +14,7 @@ const volumeValue = document.getElementById('volumeValue');
 const upvoteBtn = document.getElementById('upvoteBtn');
 
 // ==================== API CONFIGURATION ====================
-const API_BASE_URL = 'https://ahmeddewy1-radiofm.hf.space/api/stats'; 
+const API_BASE_URL = 'https://ahmeddewy1-radiofm.hf.space'; 
 
 // Cleaned up: Only one definition of cachedStats
 let cachedStats = {
