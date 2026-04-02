@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holy Quran Radio Bot - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap)" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <style>
+        /* ==================== CSS VARIABLES ==================== */
+        :root {
+            /* Colors - Light Mode */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            
+            /* Accent Colors */
+            --accent-primary: #10b981;
+            --accent-secondary: #059669;
+            --accent-light: rgba(16, 185, 129, 0.1);
+            --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            
+            /* Discord Colors */
+            --discord-color: #5865f2;
+            --discord-hover: #4752c4;
+            
+            /* Status Colors */
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            
+            /* Spacing */
+            --nav-height: 70px;
+            --container-width: 1200px;
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+            
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #64748b;
+            --border-color: #334155;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Accent Color Variants */
+        [data-accent="blue"] {
+            --accent-primary: #3b82f6;
+            --accent-secondary: #2563eb;
+            --accent-light: rgba(59, 130, 246, 0.1);
+            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        [data-accent="purple"] {
+            --accent-primary: #8b5cf6;
+            --accent-secondary: #7c3aed;
+            --accent-light: rgba(139, 92, 246, 0.1);
+            --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        [data-accent="gold"] {
+            --accent-primary: #f59e0b;
+            --accent-secondary: #d97706;
+            --accent-light: rgba(245, 158, 11, 0.1);
+            --accent-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        /* ==================== BASE STYLES ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color var(--transition-normal), color var(--transition-normal);
+        }
+
+        body.no-animations * {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ==================== THEME TOGGLE ==================== */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px var(--shadow-color);
+        }
+
+        /* ==================== NAVIGATION ==================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-height);
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            transition: all var(--transition-normal);
+        }
+
+        .navbar.scrolled {
+            background: rgba(var(--bg-primary-rgb), 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px var(--shadow-color);
+        }
+
+        .nav-container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
+
+        .nav-link {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--accent-primary);
+            background: var(--accent-light);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        /* ==================== BUTTONS ==================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .btn-lg {
+            padding: 16px 32px;
+            font-size: 1rem;
+        }
+
+        /* ==================== HERO SECTION ==================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: var(--nav-height);
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+        }
+
+        .hero-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, var(--accent-light) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 40% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+            opacity: 0.8;
+        }
+
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-family: 'Amiri', serif;
+            font-size: 1.75rem;
+            color: var(--accent-primary);
+            margin-bottom: 16px;
+        }
+
+        .hero-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 32px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-primary);
+            font-size: 1.25rem;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Bot Preview */
+        .hero-image {
+            display: flex;
+            justify-content: center;
+        }
+
+        .bot-preview {
+            width: 100%;
+            max-width: 450px;
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 20px 50px var(--shadow-color);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .preview-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .preview-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--border-color);
+        }
+
+        .preview-dots span:first-child { background: #ef4444; }
+        .preview-dots span:nth-child(2) { background: #f59e0b; }
+        .preview-dots span:last-child { background: #22c55e; }
+
+        .preview-title {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .preview-content {
+            padding: 20px;
+        }
+
+        .message {
+            display: flex;
+            gap: 16px;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .message-body {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .message-badge {
+            padding: 2px 6px;
+            background: var(--discord-color);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .message-embed {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .embed-color {
+            width: 4px;
+            background: var(--accent-primary);
+        }
+
+        .embed-content {
+            padding: 12px 16px;
+            flex: 1;
+        }
+
+        .embed-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .embed-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .embed-fields {
+            display: flex;
+            gap: 24px;
+        }
+
+        .embed-field {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .field-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+        }
+
+        .field-value {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: var(--text-tertiary);
+            font-size: 1.5rem;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* ==================== SECTIONS COMMON ==================== */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ==================== FEATURES SECTION ==================== */
+        .features {
+            background: var(--bg-secondary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 32px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-normal);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px var(--shadow-color);
+            border-color: var(--accent-primary);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: var(--accent-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ==================== COMMANDS SECTION ==================== */
+        .commands-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .command-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .command-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-fast);
+        }
+
+        .command-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(5px);
+        }
+
+        .command-name {
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            color: var(--accent-primary);
+            background: var(--accent-light);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .command-desc {
+            color: var(--text-secondary);
+            flex: 1;
+            margin-left: 20px;
+            text-align: right;
+        }
+
+        /* ==================== DASHBOARD SECTION ==================== */
+        .dashboard {
+            background: var(--bg-secondary);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .dashboard-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .card-header i {
+            color: var(--accent-primary);
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: var(--success);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Stats Card */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 24px;
+        }
+
+        .stat-box {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+        }
+
+        .stat-icon-sm {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-icon-sm.servers {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .stat-icon-sm.users {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .stat-icon-sm.upvotes {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .stat-icon-sm.voice {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        .stat-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-name {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Status Card */
+        .status-content {
+            padding: 24px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            color: var(--text-secondary);
+        }
+
+        .status-value {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .status-value.online {
+            color: var(--success);
+        }
+
+        .status-value.online i {
+            font-size: 0.5rem;
+        }
+
+        /* Action Card */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 24px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-fast);
+        }
+
+        .action-btn.primary {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn.secondary:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .action-btn.discord {
+            background: var(--discord-color);
+            color: white;
+        }
+
+        .action-btn.discord:hover {
+            background: var(--discord-hover);
+        }
+
+        .action-btn.github {
+            background: #24292e;
+            color: white;
+        }
+
+        .action-btn.github:hover {
+            background: #1a1e22;
+        }
+
+        .action-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Radio Card */
+        .radio-list {
+            padding: 16px 24px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: all var(--transition-fast);
+        }
+
+        .radio-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .radio-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .radio-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .radio-icon.playing {
+            background: var(--accent-gradient);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .radio-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .radio-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .radio-desc {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        .radio-status {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        /* ==================== SETTINGS SECTION ==================== */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .settings-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settings-header i {
+            color: var(--accent-primary);
+            font-size: 1.25rem;
+        }
+
+        .settings-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .settings-content {
+            padding: 24px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .setting-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .setting-desc {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-tertiary);
+            border-radius: 28px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .slider::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: var(--transition-fast);
+        }
+
+        .switch input:checked + .slider {
+            background: var(--accent-gradient);
+        }
+
+        .switch input:checked + .slider::before {
+            transform: translateX(22px);
+        }
+
+        /* Color Options */
+        .color-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .color-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            background: var(--color);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .color-btn:hover,
+        .color-btn.active {
+            border-color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        /* Volume Control */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .volume-control input[type="range"] {
+            width: 100px;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .volume-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            cursor: pointer;
+        }
+
+        #volumeValue {
+            font-weight: 600;
+            color: var(--accent-primary);
+            min-width: 40px;
+        }
+
+        /* Select */
+        .setting-select {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .setting-select:focus {
+            border-color: var(--accent-primary);
+        }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 60px 0 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 16px;
+        }
+
+        .footer-brand h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition-fast);
+        }
+
+        .social-link:hover {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .footer-column h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: var(--transition-fast);
+        }
+
+        .footer-column a:hover {
+            color: var(--accent-primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-bottom p {
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .footer-bottom i {
+            color: var(--error);
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 1024px) {
+            .hero .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-description {
+                margin: 0 auto 32px;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-stats {
+                justify-content: center;
+            }
+            
+            .hero-image {
+                display: none;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .footer-brand {
+                max-width: 100%;
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+            
+            .footer-links {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: var(--nav-height);
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                padding: 20px;
+                flex-direction: column;
+                gap: 0;
+                border-bottom: 1px solid var(--border-color);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all var(--transition-normal);
+            }
+            
+            .nav-menu.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .commands-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .command-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+            
+            .command-desc {
+                margin-left: 0;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-links {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.25rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .btn-lg {
+                padding: 14px 24px;
+                font-size: 0.9rem;
+            }
+            
+            .theme-toggle {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <img src="assets/logo.png" alt="Logo" class="logo-img">
+                <span>Holy Quran Radio</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#commands" class="nav-link">Commands</a></li>
+                <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="#settings" class="nav-link">Settings</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="#" class="btn btn-primary" id="inviteBtn">
+                    <i class="fas fa-plus"></i> Add to Server
+                </a>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-bg">
+            <div class="hero-pattern"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-star"></i>
+                    <span>Islamic Radio Bot</span>
+                </div>
+                <h1 class="hero-title">
+                    Holy Quran Radio
+                    <span class="gradient-text">Discord Bot</span>
+                </h1>
+                <p class="hero-subtitle arabic-text">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+                <p class="hero-description">
+                    Listen to 24/7 Holy Quran recitation directly in your Discord server. 
+                    Features multiple radio stations, moderation tools, and AutoMod protection.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary btn-lg" id="heroInviteBtn">
+                        <i class="fab fa-discord"></i>
+                        Add to Discord
+                    </a>
+                    <a href="#features" class="btn btn-outline btn-lg">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="serverCount">--</span>
+                            <span class="stat-label">Servers</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="onlineCount">--</span>
+                            <span class="stat-label">Online Users</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="upvoteCount">--</span>
+                            <span class="stat-label">Upvotes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="bot-preview">
+                    <div class="preview-header">
+                        <div class="preview-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="preview-title">Discord</span>
+                    </div>
+                    <div class="preview-content">
+                        <div class="message bot-message">
+                            <div class="message-avatar">
+                                <img src="assets/logo.png" alt="Bot">
+                            </div>
+                            <div class="message-body">
+                                <div class="message-header">
+                                    <span class="message-author">Holy Quran Radio</span>
+                                    <span class="message-badge">BOT</span>
+                                    <span class="message-time">Today at 12:00</span>
+                                </div>
+                                <div class="message-embed">
+                                    <div class="embed-color"></div>
+                                    <div class="embed-content">
+                                        <div class="embed-title">📻 Now Playing</div>
+                                        <div class="embed-description">
+                                            <strong>Holy Quran Radio Cairo</strong><br>
+                                            Live Quran recitation from Cairo, Egypt
+                                        </div>
+                                        <div class="embed-fields">
+                                            <div class="embed-field">
+                                                <span class="field-name">🔊 Channel</span>
+                                                <span class="field-value">General</span>
+                                            </div>
+                                            <div class="embed-field">
+                                                <span class="field-name">👥 Listeners</span>
+                                                <span class="field-value">12</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Features</span>
+                <h2 class="section-title">Everything You Need</h2>
+                <p class="section-subtitle">Powerful features to enhance your Islamic Discord community</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <h3>24/7 Quran Radio</h3>
+                    <p>Stream live Quran recitation from multiple radio stations directly in your voice channels.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headphones"></i>
+                    </div>
+                    <h3>Multiple Stations</h3>
+                    <p>Choose from Holy Quran Radio Cairo, Tafsir Radio, Islam2Day, and more.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>AutoMod Protection</h3>
+                    <p>Automatic moderation to protect your server from spam, links, and inappropriate content.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <h3>Moderation Tools</h3>
+                    <p>Complete moderation suite with kick, ban, timeout, warnings, and more.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <h3>Easy Configuration</h3>
+                    <p>Simple slash commands to configure all bot settings without any hassle.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Lightning Fast</h3>
+                    <p>Optimized performance with instant response times and stable streaming.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="commands" id="commands">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Commands</span>
+                <h2 class="section-title">Bot Commands</h2>
+                <p class="section-subtitle">All available slash commands</p>
+            </div>
+            <div class="commands-tabs">
+                <button class="tab-btn active" data-tab="radio">
+                    <i class="fas fa-music"></i> Radio
+                </button>
+                <button class="tab-btn" data-tab="moderation">
+                    <i class="fas fa-shield-alt"></i> Moderation
+                </button>
+                <button class="tab-btn" data-tab="automod">
+                    <i class="fas fa-robot"></i> AutoMod
+                </button>
+                <button class="tab-btn" data-tab="utility">
+                    <i class="fas fa-tools"></i> Utility
+                </button>
+            </div>
+            <div class="commands-content">
+                <div class="tab-content active" id="radio">
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command-name">/play</div>
+                            <div class="command-desc">Start playing Holy Quran Radio in your voice channel</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/stop</div>
+                            <div class="command-desc">Stop the radio and disconnect from voice channel</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/stations</div>
+                            <div class="command-desc">View all available radio stations</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/nowplaying</div>
+                            <div class="command-desc">Show the currently playing station</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/volume [level]</div>
+                            <div class="command-desc">Adjust the playback volume (1-100)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="moderation">
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command-name">/kick [member] [reason]</div>
+                            <div class="command-desc">Kick a member from the server</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/ban [member] [reason]</div>
+                            <div class="command-desc">Ban a member from the server</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/unban [user_id]</div>
+                            <div class="command-desc">Unban a user from the server</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/timeout [member] [duration] [reason]</div>
+                            <div class="command-desc">Timeout a member for specified minutes</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/warn [member] [reason]</div>
+                            <div class="command-desc">Issue a warning to a member</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/warnings [member]</div>
+                            <div class="command-desc">View warnings for a member</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/clear [amount]</div>
+                            <div class="command-desc">Delete messages from the channel</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/slowmode [seconds]</div>
+                            <div class="command-desc">Set slowmode for the channel</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/lock</div>
+                            <div class="command-desc">Lock the current channel</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/unlock</div>
+                            <div class="command-desc">Unlock the current channel</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="automod">
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command-name">/automod [feature] [enabled]</div>
+                            <div class="command-desc">Toggle AutoMod features (antispam, antilinks, anticaps, antiinvites, antimentions)</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/automod-status</div>
+                            <div class="command-desc">View current AutoMod configuration</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/setlogchannel [channel]</div>
+                            <div class="command-desc">Set the channel for AutoMod logs</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="utility">
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command-name">/serverinfo</div>
+                            <div class="command-desc">Display server information</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/userinfo [member]</div>
+                            <div class="command-desc">Display user information</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/avatar [member]</div>
+                            <div class="command-desc">View a user's avatar</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/ping</div>
+                            <div class="command-desc">Check bot latency</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/invite</div>
+                            <div class="command-desc">Get the bot invite link</div>
+                        </div>
+                        <div class="command-item">
+                            <div class="command-name">/help</div>
+                            <div class="command-desc">View all commands</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard" id="dashboard">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Live Stats</span>
+                <h2 class="section-title">Bot Dashboard</h2>
+                <p class="section-subtitle">Real-time statistics and status</p>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card stats-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+                        <span class="live-indicator">
+                            <span class="live-dot"></span> Live
+                        </span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-icon-sm servers">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-number" id="dashServerCount">--</span>
+                                <span class="stat-name">Servers</span>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon-sm users">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-number" id="dashOnlineCount">--</span>
+                                <span class="stat-name">Online Users</span>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon-sm upvotes">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-number" id="dashUpvoteCount">--</span>
+                                <span class="stat-name">Upvotes</span>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon-sm voice">
+                                <i class="fas fa-headphones"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-number" id="dashVoiceCount">--</span>
+                                <span class="stat-name">Active Streams</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-card status-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-signal"></i> Status</h3>
+                    </div>
+                    <div class="status-content">
+                        <div class="status-item">
+                            <span class="status-label">Bot Status</span>
+                            <span class="status-value online" id="botStatus">
+                                <i class="fas fa-circle"></i> Online
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">API Status</span>
+                            <span class="status-value online" id="apiStatus">
+                                <i class="fas fa-circle"></i> Operational
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Radio Stream</span>
+                            <span class="status-value online" id="streamStatus">
+                                <i class="fas fa-circle"></i> Active
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Uptime</span>
+                            <span class="status-value" id="uptimeValue">--</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-card action-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-hand-pointer"></i> Quick Actions</h3>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn primary" id="upvoteBtn">
+                            <i class="fas fa-heart"></i>
+                            <span>Upvote Bot</span>
+                            <span class="action-count" id="upvoteBtnCount">0</span>
+                        </button>
+                        <a href="#" class="action-btn secondary" id="addServerBtn">
+                            <i class="fas fa-plus"></i>
+                            <span>Add to Server</span>
+                        </a>
+                        <a href="https://discord.gg/AgwQtpuC7s" class="action-btn discord" target="_blank">
+                            <i class="fab fa-discord"></i>
+                            <span>Support Server</span>
+                        </a>
+                        <a href="https://github.com/ahmadsheban3-maker/holy-quran-radio-bot" class="action-btn github" target="_blank">
+                            <i class="fab fa-github"></i>
+                            <span>GitHub</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="dashboard-card radio-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-broadcast-tower"></i> Radio Stations</h3>
+                    </div>
+                    <div class="radio-list">
+                        <div class="radio-item">
+                            <div class="radio-icon playing">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="radio-info">
+                                <span class="radio-name">Holy Quran Radio Cairo</span>
+                                <span class="radio-desc">Live from Egypt</span>
+                            </div>
+                            <span class="radio-status">Primary</span>
+                        </div>
+                        <div class="radio-item">
+                            <div class="radio-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="radio-info">
+                                <span class="radio-name">Quran Radio Tafsir</span>
+                                <span class="radio-desc">With Commentary</span>
+                            </div>
+                            <span class="radio-status">Available</span>
+                        </div>
+                        <div class="radio-item">
+                            <div class="radio-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="radio-info">
+                                <span class="radio-name">Islam2Day Radio</span>
+                                <span class="radio-desc">Islamic Content</span>
+                            </div>
+                            <span class="radio-status">Available</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="settings" id="settings">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Customize</span>
+                <h2 class="section-title">Settings</h2>
+                <p class="section-subtitle">Personalize your experience</p>
+            </div>
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <i class="fas fa-palette"></i>
+                        <h3>Appearance</h3>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Dark Mode</span>
+                                <span class="setting-desc">Switch between light and dark themes</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="darkModeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Animations</span>
+                                <span class="setting-desc">Enable or disable animations</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="animationsToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Accent Color</span>
+                                <span class="setting-desc">Choose your preferred color</span>
+                            </div>
+                            <div class="color-options">
+                                <button class="color-btn active" data-color="green" style="--color: #10b981;"></button>
+                                <button class="color-btn" data-color="blue" style="--color: #3b82f6;"></button>
+                                <button class="color-btn" data-color="purple" style="--color: #8b5cf6;"></button>
+                                <button class="color-btn" data-color="gold" style="--color: #f59e0b;"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <i class="fas fa-bell"></i>
+                        <h3>Notifications</h3>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Update Notifications</span>
+                                <span class="setting-desc">Get notified about bot updates</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="updateNotifToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Auto Refresh Stats</span>
+                                <span class="setting-desc">Automatically refresh dashboard statistics</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="autoRefreshToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <i class="fas fa-cog"></i>
+                        <h3>Bot Settings</h3>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Default Volume</span>
+                                <span class="setting-desc">Set default playback volume</span>
+                            </div>
+                            <div class="volume-control">
+                                <input type="range" id="volumeSlider" min="1" max="100" value="80">
+                                <span id="volumeValue">80%</span>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Default Station</span>
+                                <span class="setting-desc">Preferred radio station</span>
+                            </div>
+                            <select id="stationSelect" class="setting-select">
+                                <option value="quran_cairo">Holy Quran Radio Cairo</option>
+                                <option value="quran_tafsir">Quran Radio Tafsir</option>
+                                <option value="islam2day">Islam2Day Radio</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/logo.svg" alt="Logo" class="footer-logo">
+                    <h3>Holy Quran Radio Bot</h3>
+                    <p>Listen to the Holy Quran 24/7 in your Discord server</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Navigation</h4>
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#commands">Commands</a></li>
+                            <li><a href="#dashboard">Dashboard</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">Support Server</a></li>
+                            <li><a href="#">GitHub</a></li>
+                            <li><a href="#">Status Page</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Holy Quran Radio Bot. Made with <i class="fas fa-heart"></i> for the Ummah.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
